@@ -21,7 +21,7 @@ if __name__ == "__main__":
     ContainerMuxrate=9000
     VideoFormat='libx264'
 
-    jsonParam={
+    parameterDict={
         'Container':{
             'Format':ContainerFormat,
             'Muxrate':ContainerMuxrate},
@@ -29,12 +29,12 @@ if __name__ == "__main__":
             'Format':VideoFormat}}
 
     # current path
-    currentFolder = os.getcwd()
-    configName = 'aa.txt'
-    configFile = f'{currentFolder}/{configName}'
+    currentPath = os.getcwd()
+    fileExt = 'pyhocon.txt'
+    configPathFileExt = f'{currentPath}/{fileExt}'
 
     # save to current path
-    saveHoconFile(configFile,jsonParam)
+    saveHoconFile(configPathFileExt,parameterDict)
     # open aa.txt
-    read=openHoconFile(configFile)
+    read=openHoconFile(configPathFileExt)
     print(read.get_int('Container.Muxrate'))
