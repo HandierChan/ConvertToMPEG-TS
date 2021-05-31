@@ -16,7 +16,7 @@ from tkinter.filedialog import askopenfilename,asksaveasfilename
 # extra modules
 import pyhoconConfig
 import about
-import convert
+import ffmpegConvert
 
 
 #### GUI 控件大小

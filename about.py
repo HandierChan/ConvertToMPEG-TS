@@ -12,9 +12,9 @@ def about():
     tkWinYPos = (screenHeight - tkWinHeigth) / 2
     root.geometry( "%dx%d+%d+%d" % (tkWinWidth,tkWinHeigth,tkWinXPos,tkWinYPos))
 
-    tk.Label(root,text='制作：天雷动漫').grid(row=0,sticky='w')
-    tk.Label(root,text='测试环境：python3.9 ffmpeg4.3').grid(row=1,sticky='w')
-    tk.Label(root,text='源码：https://github.com/HandierChan').grid(row=2,sticky='w')
+    tk.Label(root,justify='left',text='制作：天雷动漫').grid(row=0,sticky='w')
+    tk.Label(root,justify='left',text='测试环境：win10 python3.9 ffmpeg4.3').grid(row=1,sticky='w')
+    tk.Label(root,justify='left',text='源码：\nhttps://gitee.com/handierchan/convert2mpegts\nhttps://github.com/handierchan/convert2mpegts').grid(row=2,sticky='w')
     tk.Button(root,text="Close",command=lambda:root.destroy()).grid(row=3,sticky='w')
 
     root.mainloop()
@@ -41,5 +41,5 @@ def howto():
     root.mainloop()
 
 if __name__ == "__main__":
-    # about()
+    about()
     howto()
