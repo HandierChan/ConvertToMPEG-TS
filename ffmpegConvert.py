@@ -89,15 +89,6 @@ def selectOutputPath(tkVar):
     tkVar.set(selectPath)
 
 
-def createAppDataPath(softwareName='',dataFolder=''):
-    # windows系统 %appdata% 创建文件夹，放用户数据
-    appdataPath=os.getenv('appdata')
-    fullPath=os.path.normpath(f'{appdataPath}/{softwareName}/{dataFolder}')
-    if not os.path.exists(fullPath):
-        try:os.makedirs(fullPath)
-        except:pass
-    else:return fullPath
-
 
 def tkGUIPosition(tkinter,addWidth=10,addHight=10):
     tkinter.resizable(0,0)
@@ -120,9 +111,9 @@ if __name__ == "__main__":
     tkVarOutputPath = StringVar(tk, value=r'z:/')
 
     #### tk界面元素
-    ffmpegInstPathLabel = Label(tk, text=r'ffmpeg.exe')
-    ffmpegInstPath = Entry(tk, textvariable=tkVarFFmpegPath)
-    ffmpegInstPathButton = Button(tk, text='Select', command=lambda:selectFFmpegPath(tkVarFFmpegPath))
+    ffmpegInstallPathLabel = Label(tk, text=r'ffmpeg.exe')
+    ffmpegInstallPath = Entry(tk, textvariable=tkVarFFmpegPath)
+    ffmpegInstallPathButton = Button(tk, text='Select', command=lambda:selectFFmpegPath(tkVarFFmpegPath))
     #
     videoFileLabel = Label(tk, text='Video(s) or Path')
     videoFilesEntry = Entry(tk, textvariable=tkVarVideoFiles)
@@ -139,13 +130,13 @@ if __name__ == "__main__":
     ffmpegParam.focus()
     #
     ConvertButton=Button(tk,text='Start',fg='green',command=lambda:
-        outputAllVideos(ffmpegInstPath.get(),videoFilesEntry.get(),ffmpegParam.get(1.0,END),outputPathEntry.get(),'ts',export=1))
+        outputAllVideos(ffmpegInstallPath.get(),videoFilesEntry.get(),ffmpegParam.get(1.0,END),outputPathEntry.get(),'ts',export=1))
     AboutButton=Button(tk,text='About',command=lambda:about.about())
 
     #### tk界面布局
-    ffmpegInstPathLabel.grid(row=0,column=0,sticky='e',ipadx=10)
-    ffmpegInstPath.grid(row=0,column=1,sticky='w',ipadx=266,pady=5)
-    ffmpegInstPathButton.grid(row=0,column=2,sticky='w')
+    ffmpegInstallPathLabel.grid(row=0,column=0,sticky='e',ipadx=10)
+    ffmpegInstallPath.grid(row=0,column=1,sticky='w',ipadx=266,pady=5)
+    ffmpegInstallPathButton.grid(row=0,column=2,sticky='w')
     #
     videoFileLabel.grid(row=1,column=0,sticky='e',ipadx=10)
     videoFilesEntry.grid(row=1,column=1,sticky='w',ipadx=266,pady=5)
