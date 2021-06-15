@@ -77,7 +77,7 @@ def openConfigFile(openGUIRead=False):
         ffmpegExtraParamVar.set(hoconConfig.get_string('Extra.FFmpegParameters'))
         encoderExtraParamVar.set(hoconConfig.get_string('Extra.EncoderParameters'))
         ## 以下会出现异常，最后再try
-        ffmpegPathVar.set(hoconConfig.get_string('IOPath.ffmpegPath'))
+        # ffmpegPathVar.set(hoconConfig.get_string('IOPath.ffmpegPath'))
         inputVideosVar.set(hoconConfig.get_string('IOPath.videosPath'))
         outputPathVar.set(hoconConfig.get_string('IOPath.outputPath'))
     except:pass
