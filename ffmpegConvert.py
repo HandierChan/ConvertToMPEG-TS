@@ -2,18 +2,22 @@
 得到ffmpeg参数、导入文件和导出路径，转换成发送到cmd的命令
 '''
 
-# python3.9 ffmpeg4.3
+# env: python3.9 ffmpeg4.3
 
+# python modules
 import os,subprocess
 from tkinter import *
 from tkinter.filedialog import askdirectory,askopenfilenames,askopenfilename
 from tkinter.scrolledtext import ScrolledText
 
-# extra modules
+# local modules
 import about
 
+# extra modules, need to install 
+import windnd
 
-# 当用户选择文件夹，用扩展名来过滤视频文件，可能有遗漏
+
+### 当用户选择文件夹，用扩展名来过滤视频文件，可能有遗漏
 videoExtLists=('.mov','.mp4','.mpg','.mpeg','.mxf','.mkv','.rmvb','.3gp','.m2v','.m4v','.wmv','.avi','.rm','.flv','.mpv','.ts')
 videoExtAskOpenFileNames='*'+';*'.join(videoExtLists)
 
@@ -104,24 +108,24 @@ if __name__ == "__main__":
     tk = Tk()
     tk.title('Convert to MPEG-TS')
 
-    #### 初始化变量
+    ### 初始化变量
     currentPath = os.getcwd()
-    tkVarFFmpegPath = StringVar(tk, value=currentPath+r'\ffmpeg.exe')
-    tkVarVideoFiles = StringVar(tk, value=r'z:/a.mp4')
-    tkVarOutputPath = StringVar(tk, value=r'z:/')
+    ffmpegPathVar = StringVar(tk, value=currentPath+r'\ffmpeg.exe')
+    videoFilesVar = StringVar(tk, value=r'z:/a.mp4')
+    outputPathVar = StringVar(tk, value=r'z:/')
 
-    #### tk界面元素
+    ### tk界面元素
     ffmpegInstallPathLabel = Label(tk, text=r'ffmpeg.exe')
-    ffmpegInstallPath = Entry(tk, textvariable=tkVarFFmpegPath)
-    ffmpegInstallPathButton = Button(tk, text='Select', command=lambda:selectFFmpegPath(tkVarFFmpegPath))
+    ffmpegInstallPath = Entry(tk, textvariable=ffmpegPathVar)
+    ffmpegInstallPathButton = Button(tk, text='Select', command=lambda:selectFFmpegPath(ffmpegPathVar))
     #
     videoFileLabel = Label(tk, text='Video(s) or Path')
-    videoFilesEntry = Entry(tk, textvariable=tkVarVideoFiles)
-    videoFilesButton = Button(tk, text='Select', command=lambda:selectVideoFiles(tkVarVideoFiles))
+    videoFilesEntry = Entry(tk, textvariable=videoFilesVar)
+    videoFilesButton = Button(tk, text='Select', command=lambda:selectVideoFiles(videoFilesVar))
     #
     outputPathLabel = Label(tk, text='Output Path')
-    outputPathEntry = Entry(tk, textvariable=tkVarOutputPath)
-    outputPathButton = Button(tk, text='Select', command=lambda:selectOutputPath(tkVarOutputPath))
+    outputPathEntry = Entry(tk, textvariable=outputPathVar)
+    outputPathButton = Button(tk, text='Select', command=lambda:selectOutputPath(outputPathVar))
     #
     ffmpegLabel = Label(tk, text='FFmpeg Param')
     ffmpegParam = ScrolledText(tk,width='78',height='6',wrap='word')
@@ -133,7 +137,7 @@ if __name__ == "__main__":
         outputAllVideos(ffmpegInstallPath.get(),videoFilesEntry.get(),ffmpegParam.get(1.0,END),outputPathEntry.get(),'ts',export=1))
     AboutButton=Button(tk,text='About',command=lambda:about.about())
 
-    #### tk界面布局
+    ### tk界面布局
     ffmpegInstallPathLabel.grid(row=0,column=0,sticky='e',ipadx=10)
     ffmpegInstallPath.grid(row=0,column=1,sticky='w',ipadx=266,pady=5)
     ffmpegInstallPathButton.grid(row=0,column=2,sticky='w')
@@ -152,6 +156,30 @@ if __name__ == "__main__":
     ConvertButton.grid(row=4,column=1,sticky='w',ipadx=20,pady=5)
     AboutButton.grid(row=4,column=1,sticky='e',ipadx=20)
 
+
+    ### Mouse Drag to Entry
+    def ffmpegInstallPath_MouseDrag(file):
+        if os.path.isfile(file[0]): ffmpegPathVar.set(file[0])
+    def videoFilesEntry_MouseDrag(files):
+        filesFilters=[i for i in files if os.path.isfile(i)]
+        filesList='; '.join((i for i in filesFilters))
+        videoFilesVar.set(filesList)
+    def outputPathEntry_MouseDrag(path):
+        if os.path.isdir(path[0]): outputPathVar.set(path[0])
+    def ffParam_MouseDrag(files):
+        with open(files[0], "r", encoding='utf-8') as r:
+            try:text=r.read()
+            except:text=''
+        ffParam.delete(1.0,END)
+        ffParam.insert(1.0,text)
+    windnd.hook_dropfiles(ffmpegInstallPath,func=ffmpegInstallPath_MouseDrag,force_unicode=1)
+    windnd.hook_dropfiles(videoFilesEntry,func=videoFilesEntry_MouseDrag,force_unicode=1)
+    windnd.hook_dropfiles(outputPathEntry,func=outputPathEntry_MouseDrag,force_unicode=1)
+    windnd.hook_dropfiles(ffParam,func=ffParam_MouseDrag,force_unicode=1)
+
+
     tkGUIPosition(tk,20,20)
 
     tk.mainloop()
+
+

@@ -5,16 +5,17 @@
 3.'itsoffset 0.06' 音视频偏移的其它办法?
 '''
 
-# win10 python3.9 ffmpeg4.3
+# env: win10 python3.9 ffmpeg4.3
 
+
+# python modules
 import os
 from tkinter import *
 from tkinter import ttk,scrolledtext,font
 from tkinter.filedialog import askopenfilename,asksaveasfilename
+
 #from PIL import Image,ImageTk
 
-# need install extra modules
-# pyhocon
 
 # local modules
 import pyhoconConfig
@@ -22,25 +23,33 @@ import about
 import ffmpegConvert
 
 
+# extra modules, need to install 
+import windnd
 
-#### GUI 控件大小
+# extra modules, need to install 
+# pyhocon
+
+
+
+##### GUI 控件大小
 containerpadx=10
 containerpady=5
 
-labelWidth=18
+labelWidth=19
 comboboxWidth=12
 entryWidth=15
 
 gridPadx=5
 gridPady=3
 
-buttonWidth=9
+buttonWidth=10
+buttonHeight=1
 
 # 默认参数
 softwareName='ConvertToMPEG-TS'
 
 
-#### 默认配置按键
+##### 默认配置按键
 def defaultParam():
     [i.current(1) for i in allComboboxControl]
     # [i.set('') for i in allEntryControlVar]
@@ -54,7 +63,8 @@ def clearParam():
     [i.current(0) for i in allComboboxControl]
     [i.set('') for i in allEntryControlVar]
 
-#### 菜单栏定义
+
+##### 菜单栏定义
 def openConfigFile(openGUIRead=False):
     if openGUIRead==False:
         selectPathFileExt=askopenfilename(filetypes=[("Config File","*.txt")],title="Open preset",initialdir=currentPresetsPath())
@@ -62,7 +72,7 @@ def openConfigFile(openGUIRead=False):
     else:
         try:hoconConfig=pyhoconConfig.openHoconFile(pyhoconConfig.createAppDataPath(softwareName,'presets')+'/history.txt') # askopenfilename鼠标点取消打开的窗口会报错或退出
         except:pass
-    #### 设置参数
+    ##### 设置参数
     configDict={
     containerFormat:'Container.Format',containerBit:'Container.OverallBitRate',
     videoEncoder:'Video.Encoder',videoEntropy:'Video.Entropy',videoBitRate:'Video.BitRate',videoCBR:'Video.Constant',videoSize:'Video.Size',videoAspect:'Video.Aspect',videoProfile:'Video.Profile',videoLevel:'Video.Level',videoFrameRate:'Video.FrameRate',videoGOP:'Video.GOP',videoReference:'Video.ReferenceFrames',videoBFrames:'Video.B-Frames',videoPixelFormat:'Video.PixelFormat',videoColorSpace:'Video.ColorSpace',videoScanType:'Video.ScanType',
@@ -81,6 +91,7 @@ def openConfigFile(openGUIRead=False):
         inputVideosVar.set(hoconConfig.get_string('IOPath.videosPath'))
         outputPathVar.set(hoconConfig.get_string('IOPath.outputPath'))
     except:pass
+
 def saveConfigFile():
     pathFileExt=asksaveasfilename(filetypes=[("Config File","*.txt")],title="Save preset",initialdir=currentPresetsPath())
     if 'txt' not in pathFileExt[-3:].lower(): pathFileExt+='.txt'
@@ -100,7 +111,10 @@ def quitWindow():
 tk=Tk()
 tk.title('ConvertToMPEG-TS')
 # tk.iconbitmap('C:/aa.ico')
-#### GUI 菜单栏
+
+
+
+##### GUI 菜单栏
 tk_Menu = Menu(tk)
 tk.config(menu=tk_Menu)
 # File
@@ -120,28 +134,20 @@ tk_Menu.add_cascade(label="Help",menu=menu_help)
 ### GUI框架 Frame
 IOFrame = LabelFrame(tk,relief=FLAT)
 IOFrame.grid(row=0,column=0,padx=containerpadx,pady=0,columnspan=2,sticky='WENS')
-defaultButton = LabelFrame(tk,relief=FLAT)
-defaultButton.grid(row=1,column=0,padx=containerpadx,pady=0,columnspan=2,sticky='WENS')
 containerFrame = LabelFrame(tk,bd=2,text='Container')
-containerFrame.grid(row=2,column=0,padx=containerpadx,pady=containerpady,columnspan=2,sticky='WENS')
+containerFrame.grid(row=1,column=0,padx=containerpadx,pady=containerpady,columnspan=2,sticky='WENS')
 videoFrame = LabelFrame(tk,bd=2,text='Video')
-videoFrame.grid(row=3,column=0,padx=containerpadx,pady=containerpady,rowspan=2,sticky='WENS')
+videoFrame.grid(row=2,column=0,padx=containerpadx,pady=containerpady,rowspan=2,sticky='WENS')
 audioFrame = LabelFrame(tk, text='Audio')
-audioFrame.grid(row=3,column=1,padx=containerpadx,pady=containerpady,sticky='WENS')
+audioFrame.grid(row=2,column=1,padx=containerpadx,pady=containerpady,sticky='WENS')
 extraOptionsFrame = LabelFrame(tk, text='Extra Options')
-extraOptionsFrame.grid(row=4,column=1,padx=containerpadx,pady=containerpady,sticky='WENS')
+extraOptionsFrame.grid(row=3,column=1,padx=containerpadx,pady=containerpady,sticky='WENS')
 commandFrame = LabelFrame(tk, text='Command',relief=FLAT)
-commandFrame.grid(row=5,column=0,padx=containerpadx,pady=containerpady,columnspan=2,sticky='WENS')
-## GUI区域 最底下 Info 控件
+commandFrame.grid(row=4,column=0,padx=containerpadx,pady=containerpady,columnspan=2,sticky='WENS')
+defaultButton = LabelFrame(tk,relief=FLAT)
+defaultButton.grid(row=5,column=0,padx=containerpadx,pady=containerpady,columnspan=2,sticky='WENS')
+## GUI区域 最底下 Info 控件，没写上去???
 Label(tk,text='',anchor=E,fg='green').grid(row=6,column=0,sticky='W')
-
-### GUI区域 默认按钮 控件
-defParams = Button(defaultButton,text='Default',width=buttonWidth,fg='green',font=('normal',9,'bold'),command=lambda:[defaultParam(),refreshParamPreview(tk)])
-defParams.grid(row=0,column=0,padx=gridPadx,pady=gridPady)
-clearParams = Button(defaultButton,text='Clear',width=buttonWidth,fg='green',font=('normal',9,'bold'),command=lambda:[clearParam(),refreshParamPreview(tk)])
-clearParams.grid(row=0,column=1,padx=gridPadx,pady=gridPady)
-howToButton = Button(defaultButton,text='How to...',width=buttonWidth,fg='green',font=('normal',9,'bold'),command=lambda:about.howto())
-howToButton.grid(row=0,column=2,padx=gridPadx,pady=gridPady)
 
 ### GUI区域 IO 控件
 Label(IOFrame, text=r'ffmpeg.exe').grid(row=1,column=0,sticky='E',padx=gridPadx,pady=gridPady)
@@ -274,15 +280,23 @@ encoderExtraParamEntry.grid(row=3,column=0,padx=gridPadx,pady=gridPady)
 ### GUI区域 Command 控件
 commandText = scrolledtext.ScrolledText(commandFrame,width=100,height=6,wrap=WORD)
 commandText.grid(row=0, column=0, sticky='WE')
-executeCmdButton = Button(commandFrame,text='Convert',width=buttonWidth,fg='green',font=('normal',9,'bold'),command=lambda: executeParamCmd())
-executeCmdButton.grid(row=1, column=0,sticky='W',padx=gridPadx,pady=gridPady)
+
+### GUI区域 默认按钮 控件
+defParams = Button(defaultButton,text='Default',width=buttonWidth,height=buttonHeight,command=lambda:[defaultParam(),refreshParamPreview(tk)])
+defParams.grid(row=0,column=0,sticky='w',padx=gridPadx,pady=gridPady)
+clearParams = Button(defaultButton,text='Clear',width=buttonWidth,height=buttonHeight,command=lambda:[clearParam(),refreshParamPreview(tk)])
+clearParams.grid(row=0,column=1,sticky='w',padx=gridPadx,pady=gridPady)
+howToButton = Button(defaultButton,text='How to...',width=buttonWidth,height=buttonHeight,command=lambda:about.howto())
+howToButton.grid(row=0,column=2,sticky='w',padx=gridPadx,pady=gridPady)
+executeCmdButton = Button(defaultButton,text='Convert',width=buttonWidth,height=buttonHeight,fg='green',command=lambda: executeParamCmd())
+executeCmdButton.grid(row=0, column=4,sticky='e',padx=gridPadx,pady=gridPady)
 
 
 
 
-# 自动更新事件的控件列表，需要手动添加
+##### 自动更新事件的控件列表，需要手动添加
 allComboboxControl=[containerFormat,containerBit,videoEncoder,videoEntropy,videoBitRate,videoCBR,videoSize,videoAspect,videoProfile,videoLevel,videoFrameRate,videoGOP,videoReference,videoBFrames,videoPixelFormat,videoColorSpace,videoScanType,audioFormat,audioBitRate,audioChannel,audioSample]
-allEntryControlVar=[serviceNameVar,ffmpegExtraParamVar,encoderExtraParamVar,ffmpegPathVar,inputVideosVar,outputPathVar]
+allEntryControlVar=[serviceNameVar,ffmpegExtraParamVar,encoderExtraParamVar,inputVideosVar,outputPathVar]
 allEntryControl=[serviceNameEntry,ffmpegExtraParamEntry,encoderExtraParamEntry]
 # print(len(allComboboxControl)+len(allEntryControlVar)) # 检查数量
 
@@ -294,7 +308,7 @@ openConfigFile(openGUIRead=True)
 
 
 
-#### 定义自动化函数
+##### 定义自动化函数
 def paramModifySimple(commandStr='',pKey='',suffix=''):
     # 输出 commandStr+pKey，pKey为空则输出空
     # suffix 是后缀
@@ -392,10 +406,10 @@ def executeParamCmd():
 ##### 事件
 # Button 颜色事件
 def SetBGColor(event):
-    event.widget.config(bg='White')
+    event.widget.config(bg='DarkSeaGreen')
 def ReturnBGColor(event):
     event.widget.config(bg='SystemButtonFace')
-for i in [defParams,clearParams,executeCmdButton,ffmpegPathButton,inputVideosButton,outputPathButton,howToButton]:
+for i in [executeCmdButton,ffmpegPathButton,inputVideosButton,outputPathButton]:
     i.bind("<Enter>", SetBGColor)
     i.bind("<Leave>", ReturnBGColor)
 
@@ -414,7 +428,7 @@ tk.unbind_class("TCombobox", "<MouseWheel>")
 
 
 
-#### 全部配置参数，导入导出 preset
+##### 全部配置参数，导入导出 preset
 def allConfigParam(writeIOData=False):
     mainParameter={
         'Container':{
@@ -454,6 +468,27 @@ def allConfigParam(writeIOData=False):
     }
     allParameter={**mainParameter,**IOParameter}
     return allParameter if writeIOData==True else mainParameter
+
+
+##### Mouse Drag to Entry
+def ffmpegPathEntry_MouseDrag(file):
+    if os.path.isfile(file[0]): ffmpegPathVar.set(file[0])
+def inputVideosEntry_MouseDrag(files):
+    filesFilters=[i for i in files if os.path.isfile(i)]
+    filesList='; '.join((i for i in filesFilters))
+    inputVideosVar.set(filesList)
+def outputPathEntry_MouseDrag(path):
+    if os.path.isdir(path[0]): outputPathVar.set(path[0])
+def commandText_MouseDrag(files):
+    with open(files[0], "r", encoding='utf-8') as r:
+        try:text=r.read()
+        except:text=''
+    commandText.delete(1.0,END)
+    commandText.insert(1.0,text)
+windnd.hook_dropfiles(ffmpegPathEntry,func=ffmpegPathEntry_MouseDrag,force_unicode=1)
+windnd.hook_dropfiles(inputVideosEntry,func=inputVideosEntry_MouseDrag,force_unicode=1)
+windnd.hook_dropfiles(outputPathEntry,func=outputPathEntry_MouseDrag,force_unicode=1)
+windnd.hook_dropfiles(commandText,func=commandText_MouseDrag,force_unicode=1)
 
 
 ffmpegConvert.tkGUIPosition(tk,addWidth=0,addHight=0)
